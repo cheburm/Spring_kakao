@@ -15,38 +15,38 @@ var signUpData = {
 	phoneFlag: 0
 }
 
-function clearMsgNode(msg){
-	while(msg.hasChildNodes()){
+function clearMsgNode(msg) {
+	while (msg.hasChildNodes()) {
 		msg.removeChild(msg.firstChild);
 	}
 	msg.style.display = 'none';
 }
 
-function messageService(indexNumber, msgText, msgFlag){
+function messageService(indexNumber, msgText, msgFlag) {
 	const errorMsg = document.querySelectorAll('.errorMsg');
 	const successMsg = document.querySelector('.successMsg');
-	
+
 	clearMsgNode(errorMsg[indexNumber]);
 	clearMsgNode(successMsg);
-	
+
 	let msgTextNode = document.createTextNode(msgText);
-	
-	if(msgFlag == 0){
+
+	if (msgFlag == 0) {
 		errorMsg[indexNumber].appendChild(msgTextNode);
 		errorMsg[indexNumber].style.display = 'block';
-	}else {
+	} else {
 		successMsg.appendChild(msgTextNode);
 		successMsg.style.display = 'block';
 	}
 }
 
-function nextPage(indexNumber){
+function nextPage(indexNumber) {
 	warp_form[indexNumber].style.display = 'none';
-	warp_form[indexNumber+1].style.display = 'block';
-	item_ip[indexNumber+1].focus();
+	warp_form[indexNumber + 1].style.display = 'block';
+	item_ip[indexNumber + 1].focus();
 }
 
-function emailCheck(indexNumber){
+function emailCheck(indexNumber) {
 	$.ajax({
 		type: "post",
 		url: "sign-up-emailCheck",
@@ -54,47 +54,47 @@ function emailCheck(indexNumber){
 			signUpEmail: item_ip[indexNumber].value
 		},
 		dataType: "text",
-		success: function(data){
+		success: function(data) {
 			signUpData = JSON.parse(data);
-			if(signUpData.emailFlag == 0){
+			if (signUpData.emailFlag == 0) {
 				nextPage(indexNumber);
-			}else if(signUpData.emailFlag == 1){
+			} else if (signUpData.emailFlag == 1) {
 				let msgText = signUpData.signUpEmail + '(은)는 이미 존재하는 아이디입니다.';
 				messageService(indexNumber, msgText, 0);
 			}
 		},
-		error:function(){
+		error: function() {
 			alert('비동기 처리 오류!');
 		}
 	})
 }
 
-function passwordCheck(id, password){
-	
-    if(!/^[a-zA-Z0-9]{10,15}$/.test(password)){
-        let msg = '숫자와 영문자 조합으로 10~15자리를 사용해야 합니다.';
-        return msg;
-    }
-    
-    var checkNumber = password.search(/[0-9]/g);
-    var checkEnglish = password.search(/[a-z]/ig);
-    
-    if(checkNumber <0 || checkEnglish <0){
-        let msg = '숫자와 영문자를 혼용하여야 합니다.';
-        return msg;
-    }
-    
-    if(/(\w)\1\1\1/.test(password)){
-        let msg = '444같은 문자를 4번 이상 사용하실 수 없습니다.';
-        return msg;
-    }
-    
-    if(password.search(id) > -1){
-        let msg = "비밀번호에 아이디가 포함되었습니다.";
-        return msg;
-    }
-    
-    return 'true';
+function passwordCheck(id, password) {
+
+	if (!/^[a-zA-Z0-9]{10,15}$/.test(password)) {
+		let msg = '숫자와 영문자 조합으로 10~15자리를 사용해야 합니다.';
+		return msg;
+	}
+
+	var checkNumber = password.search(/[0-9]/g);
+	var checkEnglish = password.search(/[a-z]/ig);
+
+	if (checkNumber < 0 || checkEnglish < 0) {
+		let msg = '숫자와 영문자를 혼용하여야 합니다.';
+		return msg;
+	}
+
+	if (/(\w)\1\1\1/.test(password)) {
+		let msg = '444같은 문자를 4번 이상 사용하실 수 없습니다.';
+		return msg;
+	}
+
+	if (password.search(id) > -1) {
+		let msg = "비밀번호에 아이디가 포함되었습니다.";
+		return msg;
+	}
+
+	return 'true';
 }
 
 function phoneCheck(indexNumber) {
@@ -106,13 +106,13 @@ function phoneCheck(indexNumber) {
 		contentType: "application/json;charset=UTF-8",
 		success: function(data) {
 			signUpData = JSON.parse(data);
-			if(signUpData.phoneFlag == 1){
+			if (signUpData.phoneFlag == 1) {
 				let msgText = '인증성공.';
 				messageService(indexNumber, msgText, 1);
-			}else if(signUpData.phoneFlag == 0){
+			} else if (signUpData.phoneFlag == 0) {
 				let msgText = '인증실패! 존재하지 않는 연락처 입니다.';
 				messageService(indexNumber, msgText, 0);
-			}else if(signUpData.phoneFlag == 2){
+			} else if (signUpData.phoneFlag == 2) {
 				let msgText = '인증실패! 이미 가입된 연락처 입니다.';
 				messageService(indexNumber, msgText, 0);
 			}
@@ -123,60 +123,60 @@ function phoneCheck(indexNumber) {
 	})
 }
 
-function signUpSubmit(){
+function signUpSubmit() {
 	$.ajax({
 		type: "post",
 		url: "sign-up",
 		data: JSON.stringify(signUpData),
 		contentType: "application/json;charset=UTF8",
 		dataType: "text",
-		success: function(data){
-			if(data == 1){
+		success: function(data) {
+			if (data == 1) {
 				alert('회원가입을 축하합니다. 환영합니다.');
 				location.replace('sign-in');
-			}else{
+			} else {
 				alert('회원가입 실패. 다시 시도하세요.')
 				location.replace('sign-up');
 			}
 		},
-		error: function(){
+		error: function() {
 			alert('비동기 처리 실패!');
 		}
 	})
 }
 
 function nextService(indexNumber) {
-	if(item_ip[indexNumber].value.length == 0){
+	if (item_ip[indexNumber].value.length == 0) {
 		let msgText = '필수항목입니다.';
 		messageService(indexNumber, msgText, 0);
-	} else if(indexNumber == 0) {
+	} else if (indexNumber == 0) {
 		emailCheck(indexNumber);
-	} else if(indexNumber == 1) {
+	} else if (indexNumber == 1) {
 		let checkMsg = passwordCheck(signUpData.signUpEmail, item_ip[indexNumber].value);
-		if(checkMsg == 'true') {
+		if (checkMsg == 'true') {
 			nextPage(indexNumber);
-		}else {
+		} else {
 			messageService(indexNumber, checkMsg, 0);
 		}
-	} else if(indexNumber == 2) {
-		if(item_ip[1].value == item_ip[2].value){
+	} else if (indexNumber == 2) {
+		if (item_ip[1].value == item_ip[2].value) {
 			signUpData.signUpPassword = item_ip[2].value;
 			nextPage(indexNumber);
-		}else{
+		} else {
 			let msgText = '비밀번호가 일치하지 않습니다.';
 			messageService(indexNumber, msgText, 0);
 		}
-	} else if(indexNumber == 3) {
+	} else if (indexNumber == 3) {
 		signUpData.signUpName = item_ip[indexNumber].value;
 		nextPage(indexNumber);
-	} else if(indexNumber == 4) {
-		if(signUpData.phoneFlag != 1){
+	} else if (indexNumber == 4) {
+		if (signUpData.phoneFlag != 1) {
 			let msgText = '전화번호 인증이 되지 않았습니다.';
 			messageService(indexNumber, msgText, 0);
-		}else{
-			if(signUpData.signUpPhone == item_ip[indexNumber].value){
+		} else {
+			if (signUpData.signUpPhone == item_ip[indexNumber].value) {
 				signUpSubmit();
-			}else {
+			} else {
 				let msgText = '전화번호 인증이 되지 않았습니다.';
 				messageService(indexNumber, msgText, 0);
 			}
@@ -184,9 +184,9 @@ function nextService(indexNumber) {
 	}
 }
 
-for(let i = 0; i < item_ip.length; i++){
+for (let i = 0; i < item_ip.length; i++) {
 	item_ip[i].onkeypress = () => {
-		if(window.event.keyCode == 13){
+		if (window.event.keyCode == 13) {
 			window.event.preventDefault();
 			nextService(i);
 		}
@@ -198,10 +198,10 @@ for(let i = 0; i < item_ip.length; i++){
 
 button_round.onclick = () => {
 	let indexNumber = 4;
-	if(item_ip[indexNumber].value.length == 0){
+	if (item_ip[indexNumber].value.length == 0) {
 		let msgText = '필수항목입니다.';
 		messageService(indexNumber, msgText, 0);
-	}else {
+	} else {
 		signUpData.signUpPhone = item_ip[indexNumber].value;
 		phoneCheck(indexNumber);
 	}
