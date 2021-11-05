@@ -52,7 +52,7 @@
            		</c:if>
             -->
 				<ul>
-					<a href="notice?pageNumber=${noticeBean.pageNumber - 1 eq 0 ? 1 : noticeBean.pageNumber - 1 }"><li>
+					<a href="notice?pageNumber=${noticeBean.startPage - 1 eq 0 ? 1 : noticeBean.pageNumber - 1 }"><li>
 							<i class="fas fa-arrow-circle-left"></i>
 					</li></a>
 					<c:forEach var="i" begin="${noticeBean.startPage }"
